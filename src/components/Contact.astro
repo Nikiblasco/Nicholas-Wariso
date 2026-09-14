@@ -1,0 +1,128 @@
+---
+// Contact Section Component — Astro
+---
+<section id="contact" class="bg-neutral-900 text-neutral-50 px-6 py-24 relative">
+  <div class="max-w-3xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold">
+      Have a hotel, restaurant, or business that needs better software?
+    </h2>
+    <p class="mt-4 text-neutral-400 max-w-xl mx-auto">
+      I take on a small number of projects at a time. Tell me what's slow or manual today, and I'll tell you honestly whether I can help.
+    </p>
+
+    <div class="mt-8 flex flex-wrap justify-center gap-4">
+      <button 
+        id="open-contact-modal" 
+        class="px-6 py-3 rounded-md bg-amber-400 text-neutral-950 font-semibold hover:bg-amber-300 transition cursor-pointer"
+      >
+        NicholasWariso@gmail.com
+      </button>
+    </div>
+
+    <div class="mt-16 pt-8 border-t border-neutral-800 flex flex-col sm:flex-row justify-between gap-3 text-sm text-neutral-500">
+      <span>Nicholas Wariso-Elvis — Software for small businesses</span>
+      <a href="https://github.com/Nikiblasco" class="hover:text-amber-400 transition">GitHub</a>
+    </div>
+  </div>
+
+  <!-- Hidden Popup Form Modal -->
+  <div id="contact-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-neutral-950 border border-neutral-800 rounded-xl p-8 max-w-lg w-full mx-4 relative shadow-2xl text-left transform scale-95 transition-transform duration-300" id="modal-content">
+      
+      <!-- Close Button -->
+      <button id="close-contact-modal" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl font-bold">
+        &times;
+      </button>
+
+      <h3 class="text-xl font-bold text-neutral-100 mb-2">Let's build something</h3>
+      <p class="text-sm text-neutral-400 mb-6">Fill out the details below. You'll get an automatic confirmation email instantly.</p>
+
+      <form id="contact-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Your Name</label>
+          <input type="text" name="name" required class="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm" placeholder="John Doe" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Your Email</label>
+          <input type="email" name="email" required class="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm" placeholder="john@example.com" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-1">Project Details</label>
+          <textarea name="message" rows="4" required class="w-full bg-neutral-900 border border-neutral-800 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm resize-none" placeholder="What's slow or manual today?"></textarea>
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full py-3 bg-amber-400 hover:bg-amber-500 text-neutral-950 font-semibold rounded-lg transition text-sm">
+          Send Message
+        </button>
+        
+        <p id="form-status" class="text-xs text-center mt-2 hidden"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const modal = document.getElementById("contact-modal");
+  const modalContent = document.getElementById("modal-content");
+  const openBtn = document.getElementById("open-contact-modal");
+  const closeBtn = document.getElementById("close-contact-modal");
+  const form = document.getElementById("contact-form") as HTMLFormElement;
+  const statusText = document.getElementById("form-status");
+
+  const openModal = () => {
+    modal?.classList.remove("opacity-0", "pointer-events-none");
+    modalContent?.classList.remove("scale-95");
+    modalContent?.classList.add("scale-100");
+  };
+
+  const closeModal = () => {
+    modal?.classList.add("opacity-0", "pointer-events-none");
+    modalContent?.classList.remove("scale-100");
+    modalContent?.classList.add("scale-95");
+  };
+
+  openBtn?.addEventListener("click", openModal);
+  closeBtn?.addEventListener("click", closeModal);
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
+    submitBtn.textContent = "Sending...";
+    submitBtn.disabled = true;
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        if (statusText) {
+          statusText.textContent = "Message sent! Check your inbox for confirmation.";
+          statusText.className = "text-xs text-center mt-2 text-emerald-400 block";
+        }
+        form.reset();
+        setTimeout(closeModal, 3000);
+      } else {
+        throw new Error("Failed to send");
+      }
+    } catch (err) {
+      if (statusText) {
+        statusText.textContent = "Something went wrong. Try emailing directly.";
+        statusText.className = "text-xs text-center mt-2 text-rose-400 block";
+      }
+    } finally {
+      submitBtn.textContent = "Send Message";
+      submitBtn.disabled = false;
+    }
+  });
+</script>

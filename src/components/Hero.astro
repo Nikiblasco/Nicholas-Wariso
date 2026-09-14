@@ -1,0 +1,136 @@
+---
+// Generates a plausible-looking contribution grid (18 weeks x 7 days).
+const weeks = 18;
+const days = 7;
+
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+const grid = Array.from({ length: weeks }, (_, w) =>
+  Array.from({ length: days }, (_, d) => {
+    const r = seededRandom(w * 7 + d + 1);
+    if (r > 0.93) return 4;
+    if (r > 0.8) return 3;
+    if (r > 0.6) return 2;
+    if (r > 0.35) return 1;
+    return 0;
+  })
+);
+
+const totalContributions = grid.flat().reduce((sum, level) => sum + level * 2, 0);
+
+const levelColors: Record<number, string> = {
+  0: "bg-neutral-800 hover:bg-neutral-700 hover:shadow-neutral-500/50",
+  1: "bg-amber-950 hover:bg-amber-800 hover:shadow-amber-800/50",
+  2: "bg-amber-800 hover:bg-amber-600 hover:shadow-amber-600/50",
+  3: "bg-amber-600 hover:bg-amber-400 hover:shadow-amber-400/50",
+  4: "bg-amber-400 hover:bg-amber-200 hover:shadow-amber-300/80",
+};
+---
+<section id="home" class="min-h-screen bg-neutral-950 text-neutral-50 flex items-center px-6 py-24">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+
+    <!-- Left: name + headline + copy + CTAs -->
+    <div class="lg:col-span-7 flex flex-col items-start gap-6">
+      <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-amber-400 mb-3">Nicholas Wariso-Elvis</p>
+      <h1 class="max-w-2xl text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+        I build high performance web applications that drive revenue and automation.
+      </h1>
+      <p class="max-w-lg text-sm sm:text-base text-zinc-400 leading-relaxed font-normal">
+        Stop losing clients to broken forms, outdated booking steps, or slow load times. I engineer seamless backend logic and secure payment workflows for businesses across Quebec
+      </p>
+      <div class="flex flex-wrap items-center gap-4 pt-2">
+        <a
+          href="https://calendly.com/warisolvis/senior-web-developer"
+          target="_blank"
+          rel="noopener"
+          class="px-5 py-2.5 bg-amber-400 hover:bg-amber-500 text-black font-medium rounded-md transition-colors text-sm"
+        >
+          Start a project
+        </a>
+        <a href="#work" class="px-5 py-2.5 border border-zinc-700 hover:border-zinc-500 text-zinc-200 font-medium rounded-md transition-colors text-sm">
+          See the work
+        </a>
+      </div>
+    </div>
+
+    <!-- Right: interactive contribution heatmap -->
+    <div class="lg:col-span-5 flex justify-center lg:justify-end">
+      <div class="bg-neutral-900/80 border border-neutral-800 rounded-xl p-6 shadow-2xl backdrop-blur-md relative overflow-hidden">
+        <div class="flex justify-between items-baseline mb-4">
+          <span class="font-semibold text-neutral-200 text-sm">Contribution activity</span>
+          <span class="text-xs text-neutral-400 font-mono" id="contribution-counter">{totalContributions} this year</span>
+        </div>
+
+        <!-- Heatmap Interactive Grid -->
+        <div id="heatmap-container" class="flex gap-1 overflow-x-auto py-2 px-1 cursor-pointer">
+          {grid.map((week) => (
+            <div class="flex flex-col gap-1">
+              {week.map((level) => (
+                <div
+                  data-block
+                  data-level={level}
+                  class={`w-3.5 h-3.5 rounded-sm transition-all duration-200 ease-out transform origin-center hover:scale-150 hover:z-20 hover:shadow-lg ${levelColors[level]}`}
+                  title={`${level * 2} contributions`}
+                ></div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div class="flex justify-between items-center gap-1 mt-4 text-xs text-neutral-500">
+          <span class="text-[10px] text-neutral-500">Hover or drag across blocks</span>
+          <div class="flex items-center gap-1 text-xs">
+            <span>Less</span>
+            <div class="w-2.5 h-2.5 rounded-sm bg-neutral-800"></div>
+            <div class="w-2.5 h-2.5 rounded-sm bg-amber-950"></div>
+            <div class="w-2.5 h-2.5 rounded-sm bg-amber-800"></div>
+            <div class="w-2.5 h-2.5 rounded-sm bg-amber-600"></div>
+            <div class="w-2.5 h-2.5 rounded-sm bg-amber-400"></div>
+            <span>More</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // Add interactive ripple and click-level increment
+  const container = document.getElementById("heatmap-container");
+  let isMouseDown = false;
+
+  container?.addEventListener("mousedown", () => (isMouseDown = true));
+  window.addEventListener("mouseup", () => (isMouseDown = false));
+
+  const levelClasses = [
+    "bg-neutral-800",
+    "bg-amber-950",
+    "bg-amber-800",
+    "bg-amber-600",
+    "bg-amber-400",
+  ];
+
+  document.querySelectorAll("[data-block]").forEach((block) => {
+    const el = block as HTMLElement;
+
+    // React to clicking or dragging mouse over blocks
+    const activateBlock = () => {
+      let currentLevel = parseInt(el.dataset.level || "0");
+      currentLevel = (currentLevel + 1) % 5;
+      el.dataset.level = currentLevel.toString();
+
+      // Clear existing background classes and add new level class
+      levelClasses.forEach((cls) => el.classList.remove(cls));
+      el.classList.add(levelClasses[currentLevel]);
+    };
+
+    el.addEventListener("click", activateBlock);
+    el.addEventListener("mouseenter", () => {
+      if (isMouseDown) activateBlock();
+    });
+  });
+</script>

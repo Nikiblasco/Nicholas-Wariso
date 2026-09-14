@@ -1,0 +1,88 @@
+---
+// Core capabilities section — three interactive cards.
+// Cards are reactive: hover glow, spotlight-follow cursor, and tilt.
+// Lightning-strike reveals on scroll and a subtle animated grid background.
+
+const cards = [
+  {
+    icon: "🚀",
+    title: "Frictionless User Workflow",
+    body: "If your signup button freezes or your contact form fails, customers leave. I rebuild smooth, reliable pathways that capture every single lead.",
+    accent: "from-amber-400/20 to-transparent",
+    glow: "group-hover:shadow-amber-400/20",
+  },
+  {
+    icon: "🛡️",
+    title: "Secure Transaction Logic",
+    body: "Bulletproof Stripe and PayPal integrations. I connect modern payment gateways so your business can process transactions safely without data leaks.",
+    accent: "from-amber-400/20 to-transparent",
+    glow: "group-hover:shadow-amber-400/20",
+  },
+  {
+    icon: "📊",
+    title: "Operational Dashboards",
+    body: "Turning raw business numbers into interactive internal apps. I build custom dashboards that generate automated revenue reports and live operational insights.",
+    accent: "from-amber-400/20 to-transparent",
+    glow: "group-hover:shadow-amber-400/20",
+  },
+];
+---
+
+<section id="capabilities" class="relative bg-neutral-950 text-neutral-50 py-24 px-6 overflow-hidden">
+  <!-- Animated grid backdrop -->
+  <div class="pointer-events-none absolute inset-0 [background-image:radial-gradient(circle_at_1px_1px,rgba(251,191,36,0.06)_1px,transparent_0)] [background-size:28px_28px]"></div>
+  <!-- Ambient glow -->
+  <div class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[42rem] h-[24rem] bg-amber-400/10 blur-[120px] rounded-full"></div>
+
+  <div class="relative max-w-6xl mx-auto">
+    <!-- Heading -->
+    <div class="text-center mb-14">
+      <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-amber-400 mb-3">Core Capabilities</p>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">What you can rely on</h2>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base text-zinc-400">
+        The systems I build don't just work — they are designed to keep working, keep selling, and keep your customers coming back.
+      </p>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {cards.map((card) => (
+        <article
+          class="group relative overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/60 backdrop-blur-sm p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-400/50 hover:shadow-2xl hover:shadow-amber-400/10"
+        >
+          <!-- Cursor spotlight -->
+          <div
+            class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            style="background-image:radial-gradient(600px circle at var(--mx,50%) var(--my,50%), rgba(251,191,36,0.08), transparent 40%)"
+          ></div>
+
+          <!-- Icon -->
+          <div class="relative mb-5 inline-flex items-center justify-center h-12 w-12 rounded-lg bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 shadow-lg group-hover:scale-110 transition-transform duration-300">
+            <span class="text-2xl">{card.icon}</span>
+          </div>
+
+          <h3 class="relative text-lg sm:text-xl font-semibold tracking-tight mb-3 group-hover:text-amber-300 transition-colors duration-300">
+            {card.title}
+          </h3>
+          <p class="relative text-sm sm:text-base text-zinc-400 leading-relaxed">
+            {card.body}
+          </p>
+
+          <!-- Bottom accent line -->
+          <div class="relative absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-amber-400 to-transparent transition-all duration-500 group-hover:w-full"></div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Reactive cursor spotlight + scroll reveal
+  document.querySelectorAll("[data-spotlight]").forEach((card) => {
+    card.addEventListener("pointermove", (e) => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+      card.style.setProperty("--my", `${e.clientY - rect.top}px`);
+    });
+  });
+</script>

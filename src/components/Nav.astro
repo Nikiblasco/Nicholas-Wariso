@@ -1,0 +1,135 @@
+---
+const links = [
+  { href: "#home", label: "Home" },
+  { href: "#work", label: "Work" },
+  { href: "#toolkit", label: "Toolkit" },
+  { href: "#approach", label: "Approach" },
+  { href: "#contact", label: "Contact" },
+];
+---
+<nav
+  id="site-nav"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent"
+>
+  <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+    <a href="#home" class="font-semibold text-neutral-50">Nicholas W-E</a>
+
+    <!-- Desktop links -->
+    <div class="hidden md:flex relative gap-2" id="nav-links">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          data-nav-link
+          class="relative px-3 py-2 text-sm text-neutral-300 hover:text-neutral-50 transition-colors"
+        >
+          {link.label}
+        </a>
+      ))}
+      <span
+        id="nav-indicator"
+        class="absolute bottom-0 h-[2px] bg-amber-400 rounded-full transition-all duration-300"
+        style="left: 0; width: 0;"
+      ></span>
+    </div>
+
+    <!-- Mobile toggle -->
+    <button id="menu-toggle" class="md:hidden text-neutral-50" aria-label="Toggle menu">
+      <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div id="mobile-menu" class="hidden md:hidden bg-neutral-950 border-t border-neutral-800 px-6 py-4 flex flex-col gap-4">
+    {links.map((link) => (
+      <a href={link.href} data-nav-link-mobile class="text-neutral-300 hover:text-amber-400 transition-colors">
+        {link.label}
+      </a>
+    ))}
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById("site-nav");
+  const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
+  const indicator = document.getElementById("nav-indicator");
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const iconOpen = document.getElementById("icon-open");
+  const iconClose = document.getElementById("icon-close");
+
+  const sections = navLinks
+    .map((link) => document.querySelector((link as HTMLAnchorElement).getAttribute("href") || ""))
+    .filter(Boolean) as HTMLElement[];
+
+  // Move the sliding underline under a given link
+  function moveIndicator(link: HTMLElement) {
+    if (!indicator) return;
+    indicator.style.left = link.offsetLeft + "px";
+    indicator.style.width = link.offsetWidth + "px";
+  }
+
+  // Highlight active nav link + move indicator
+  function setActive(id: string) {
+    navLinks.forEach((link) => {
+      const anchor = link as HTMLAnchorElement;
+      if (anchor.getAttribute("href") === `#${id}`) {
+        anchor.classList.add("text-neutral-50");
+        anchor.classList.remove("text-neutral-300");
+        moveIndicator(anchor);
+      } else {
+        anchor.classList.remove("text-neutral-50");
+        anchor.classList.add("text-neutral-300");
+      }
+    });
+  }
+
+  // Nav background appears once you scroll past the hero
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 80) {
+      nav?.classList.add("bg-neutral-950/90", "backdrop-blur", "border-b", "border-neutral-800");
+    } else {
+      nav?.classList.remove("bg-neutral-950/90", "backdrop-blur", "border-b", "border-neutral-800");
+    }
+  });
+
+  // Watch sections to know which one is currently in view
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActive(entry.target.id);
+        }
+      });
+    },
+    { rootMargin: "-40% 0px -55% 0px" }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+
+  // Mobile menu toggle
+  menuToggle?.addEventListener("click", () => {
+    mobileMenu?.classList.toggle("hidden");
+    iconOpen?.classList.toggle("hidden");
+    iconClose?.classList.toggle("hidden");
+  });
+
+  // Close mobile menu after tapping a link
+  document.querySelectorAll("[data-nav-link-mobile]").forEach((link) => {
+    link.addEventListener("click", () => {
+      mobileMenu?.classList.add("hidden");
+      iconOpen?.classList.remove("hidden");
+      iconClose?.classList.add("hidden");
+    });
+  });
+
+  // Set initial indicator position on load
+  window.addEventListener("load", () => {
+    const first = navLinks[0] as HTMLElement;
+    if (first) moveIndicator(first);
+  });
+</script>

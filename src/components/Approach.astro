@@ -1,0 +1,39 @@
+---
+const steps = [
+  {
+    number: "01",
+    title: "A short discovery call",
+    text: "We talk through what's slow, manual, or missing today — no jargon, just what's actually costing you time or money.",
+  },
+  {
+    number: "02",
+    title: "A working version, fast",
+    text: "You see something real within the first couple of weeks, not a slide deck — so you can react to it early.",
+  },
+  {
+    number: "03",
+    title: "Support after launch",
+    text: "Software for a working business needs to keep working. I stay on to fix issues and add what you find you need.",
+  },
+];
+---
+<section id="approach" class="bg-neutral-900 text-neutral-50 px-6 py-24">
+  <div class="max-w-6xl mx-auto">
+    <div class="max-w-2xl mb-14">
+      <h2 class="text-3xl md:text-4xl font-bold">How a project runs</h2>
+      <p class="mt-4 text-neutral-400">
+        Small businesses don't need a six-month engagement. Here's the shape most projects take.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-10">
+      {steps.map((step) => (
+        <div>
+          <span class="text-amber-400 font-bold text-xl">{step.number}</span>
+          <h3 class="mt-3 text-lg font-semibold">{step.title}</h3>
+          <p class="mt-2 text-neutral-400 text-sm leading-relaxed">{step.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
