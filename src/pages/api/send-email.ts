@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 1. Send notification to you
     const notification = await resend.emails.send({
-      from: 'Portfolio Contact <onboarding@resend.dev>',
+     from: 'Portfolio Contact <hello@nicholaswariso.com>',
       to: ['NicholasWariso@gmail.com'],
       subject: `New Project Inquiry from ${name}`,
       html: `
@@ -57,7 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 2. Send confirmation to client
     const confirmation = await resend.emails.send({
-      from: 'Nicholas Wariso-Elvis <onboarding@resend.dev>',
+      from: 'Portfolio Contact <hello@nicholaswariso.com>',
       to: [email],
       subject: 'Thanks for reaching out!',
       html: `
