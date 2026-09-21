@@ -77,7 +77,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         <p>
           <strong>Nicholas Wariso-Elvis</strong><br>
-          Software for small businesses
+          Software for businesses
         </p>
       `,
     });
