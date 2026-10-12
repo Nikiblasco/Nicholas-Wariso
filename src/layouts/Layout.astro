@@ -3,14 +3,33 @@ import "../styles/global.css";
 
 interface Props {
   title?: string;
+  description?: string;
 }
-const { title = "Your Name — Software for Independent Hotels" } = Astro.props;
+
+const {
+  title = "Nicholas Wariso-Elvis | Web Developer for Quebec Hotels & Small Businesses",
+  description = "I build direct-booking websites and management tools for independent hotels and small businesses in Quebec. Bilingual (EN/FR).",
+} = Astro.props;
+
+const siteUrl = "https://www.nicholaswariso.com";
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+const ogImage = `${siteUrl}/images/hotel-website.png`;
 ---
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body class="bg-stone-50 text-stone-900 font-sans antialiased">
     <slot />
