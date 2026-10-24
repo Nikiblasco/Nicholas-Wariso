@@ -44,7 +44,7 @@ const links = [
   </div>
 
   <!-- Mobile menu panel -->
-  <div id="mobile-menu" class="hidden md:hidden bg-neutral-950 border-t border-neutral-800 px-6 py-4 flex flex-col gap-4">
+  <div id="mobile-menu" class="hidden md:hidden bg-bg border-t border-neutral-800 px-6 py-4 flex flex-col gap-4">
     {links.map((link) => (
       <a href={link.href} data-nav-link-mobile class="text-neutral-300 hover:text-amber-400 transition-colors">
         {link.label}
@@ -91,9 +91,9 @@ const links = [
   // Nav background appears once you scroll past the hero
   window.addEventListener("scroll", () => {
     if (window.scrollY > 80) {
-      nav?.classList.add("bg-neutral-950/90", "backdrop-blur", "border-b", "border-neutral-800");
+      nav?.classList.add("bg-bg/90", "backdrop-blur", "border-b", "border-neutral-800");
     } else {
-      nav?.classList.remove("bg-neutral-950/90", "backdrop-blur", "border-b", "border-neutral-800");
+      nav?.classList.remove("bg-bg/90", "backdrop-blur", "border-b", "border-neutral-800");
     }
   });
 
